@@ -72,6 +72,13 @@ jobs:
         run: |
           grep -n "create_engine" scripts/transform.py
           cat scripts/transform.py | grep "127.0.0.1"
+      - name: Check MySQL Tables
+        run: |
+           mysql -h 127.0.0.1 -u root -proot banking -e "SHOW TABLES;"
+
+      - name: Debug Transform
+        run: |
+          python -u scripts/transform.py
 
       - name: Run Transformation
         run: |
