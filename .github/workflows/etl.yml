@@ -68,9 +68,11 @@ jobs:
       - name: Test MySQL Connection
         run: |
           mysql -h 127.0.0.1 -u root -proot -e "SHOW DATABASES;"
-      - name: Check Tables
+      - name: Print Transform Connection
         run: |
-          mysql -h 127.0.0.1 -u root -proot banking -e "SHOW TABLES;"
+          grep -n "create_engine" scripts/transform.py
+          cat scripts/transform.py | grep "127.0.0.1"
+
       - name: Run Transformation
         run: |
           python scripts/transform.py
