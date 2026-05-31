@@ -1,0 +1,30 @@
+name: Banking ETL
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+
+  workflow_dispatch:
+
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Packages
+        run: |
+          pip install pandas
+          pip install sqlalchemy
+          pip install mysql-connector-python
+
+      - name: Run Transformation
+        run: |
+          python scripts/transform.py
