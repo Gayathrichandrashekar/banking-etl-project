@@ -30,7 +30,6 @@ jobs:
         with:
           python-version: "3.11"
 
-      # ✅ IMPORTANT: install mysql client
       - name: Install MySQL Client
         run: |
           sudo apt-get update
@@ -38,9 +37,13 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          pip install pandas sqlalchemy mysql-connector-python faker
+          pip install pandas
+          pip install sqlalchemy
+          pip install mysql-connector-python
+          pip install faker
+          pip install google-cloud-bigquery
+          pip install pyarrow
 
-      # ✅ WAIT UNTIL MYSQL IS REALLY READY
       - name: Wait for MySQL
         run: |
           echo "Waiting for MySQL..."
@@ -50,27 +53,28 @@ jobs:
             sleep 2
           done
 
-      # ✅ CREATE TABLES
       - name: Create Tables
         run: |
           mysql -h 127.0.0.1 -P 3306 -u root -proot banking < sql/schema.sql
 
-      # ✅ GENERATE DATA
       - name: Generate Data
         run: |
           python scripts/generate_data.py
 
-      # ✅ LOAD DATA
       - name: Load Data to MySQL
         run: |
           python scripts/load_mysql.py
 
-      # ✅ VERIFY CONNECTION
       - name: Test MySQL Connection
         run: |
           mysql -h 127.0.0.1 -u root -proot -e "SHOW DATABASES;"
 
-      # ✅ RUN TRANSFORMATION
       - name: Run Transformation
         run: |
           python scripts/transform.py
+
+      - name: Load to BigQuery
+        env:
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+        run: |
+          python scripts/load_bigquery.py

@@ -1,0 +1,6 @@
+pandas
+sqlalchemy
+mysql-connector-python
+faker
+google-cloud-bigquery
+pyarrow
