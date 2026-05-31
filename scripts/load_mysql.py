@@ -2,13 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine
 from urllib.parse import quote_plus
 
-engine = create_engine(
-    "mysql+mysqlconnector://root:root@mysql:3306/banking",
-    connect_args={
-        "host": "mysql",
-        "port": 3306
-    }
-)
+engine = create_engine("mysql+mysqldb://u:p@host/db", pool_size=10, max_overflow=20)
 
 customers = pd.read_csv("data/customers.csv")
 accounts = pd.read_csv("data/accounts.csv")
