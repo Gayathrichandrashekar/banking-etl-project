@@ -6,7 +6,9 @@ from urllib.parse import quote_plus
 # MySQL Connection
 # ---------------------------
 
-engine = create_engine("mysql+mysqldb://u:p@host/db", pool_size=10, max_overflow=20)
+engine = create_engine(
+    "mysql+mysqlconnector://root:root@127.0.0.1:3306/banking"
+)
 
 # ---------------------------
 # Read Data From MySQL
