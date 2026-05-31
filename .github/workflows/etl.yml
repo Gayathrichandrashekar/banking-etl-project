@@ -1,14 +1,25 @@
 name: Banking ETL
 
 on:
-  schedule:
-    - cron: '0 6 * * *'
-
   workflow_dispatch:
 
 jobs:
   run-etl:
     runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: banking
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
 
     steps:
       - name: Checkout Code
@@ -21,10 +32,20 @@ jobs:
 
       - name: Install Packages
         run: |
-          pip install pandas
-          pip install sqlalchemy
-          pip install mysql-connector-python
+          pip install pandas sqlalchemy mysql-connector-python faker
 
-      - name: Run Transformation
+      - name: Wait for MySQL
+        run: sleep 20
+
+      - name: Create Tables
         run: |
-          python scripts/transform.py
+          mysql -h 127.0.0.1 -P 3306 -u root -proot banking < sql/schema.sql
+
+      - name: Generate Data
+        run: python scripts/generate_data.py
+
+      - name: Load Data to MySQL
+        run: python scripts/load_to_mysql.py
+
+      - name: Run Transform
+        run: python scripts/transform.py

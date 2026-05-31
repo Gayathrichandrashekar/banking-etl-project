@@ -2,11 +2,8 @@ import pandas as pd
 from sqlalchemy import create_engine
 from urllib.parse import quote_plus
 
-username = "root"
-password = "Deeshna@2025"
-
 engine = create_engine(
-    f"mysql+mysqlconnector://{username}:{quote_plus(password)}@localhost/banking"
+    "mysql+mysqlconnector://root:root@127.0.0.1:3306/banking"
 )
 
 customers = pd.read_csv("data/customers.csv")

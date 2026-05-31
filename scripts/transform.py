@@ -6,11 +6,10 @@ from urllib.parse import quote_plus
 # MySQL Connection
 # ---------------------------
 
-username = "root"
-password = "Deeshna@2025"
+
 
 engine = create_engine(
-    f"mysql+mysqlconnector://{username}:{quote_plus(password)}@localhost/banking"
+    "mysql+mysqlconnector://root:root@127.0.0.1:3306/banking"
 )
 
 # ---------------------------
