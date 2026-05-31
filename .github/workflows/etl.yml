@@ -34,13 +34,12 @@ jobs:
         run: |
           pip install pandas sqlalchemy mysql-connector-python faker
 
-      # ✅ FIXED: Proper MySQL wait (NO more connection error)
       - name: Wait for MySQL
         run: |
-          echo "Waiting for MySQL..."
-          for i in {1..30}; do
-            mysqladmin ping -h 127.0.0.1 -u root -proot && break
-            echo "MySQL not ready yet..."
+          echo "Waiting for MySQL to be fully ready..."
+          for i in {1..60}; do
+            mysql -h 127.0.0.1 -u root -proot -e "SELECT 1" && break
+            echo "Still waiting..."
             sleep 2
           done
 
@@ -55,6 +54,10 @@ jobs:
       - name: Load Data to MySQL
         run: |
           python scripts/load_mysql.py
+
+      - name: Test MySQL Connection
+        run: |
+          mysql -h 127.0.0.1 -u root -proot -e "SHOW DATABASES;"
 
       - name: Run Transformation
         run: |
