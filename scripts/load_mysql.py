@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from urllib.parse import quote_plus
 
 engine = create_engine(
-    "mysql+mysqlconnector://root:root@127.0.0.1:3306/banking"
+    "mysql+mysqlconnector://root:root@mysql:3306/banking"
 )
 
 customers = pd.read_csv("data/customers.csv")
