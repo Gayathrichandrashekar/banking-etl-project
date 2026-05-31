@@ -7,7 +7,11 @@ from urllib.parse import quote_plus
 # ---------------------------
 
 engine = create_engine(
-    "mysql+mysqlconnector://root:root@mysql:3306/banking"
+    "mysql+mysqlconnector://root:root@mysql:3306/banking",
+    connect_args={
+        "host": "mysql",
+        "port": 3306
+    }
 )
 
 # ---------------------------
