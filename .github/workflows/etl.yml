@@ -16,10 +16,10 @@ jobs:
         ports:
           - 3306:3306
         options: >-
-          --health-cmd="mysqladmin ping --silent"
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
           --health-interval=10s
           --health-timeout=5s
-          --health-retries=5
+          --health-retries=10
 
     steps:
       - name: Checkout Code
@@ -30,22 +30,32 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Packages
+      - name: Install Dependencies
         run: |
           pip install pandas sqlalchemy mysql-connector-python faker
 
+      # ✅ FIXED: Proper MySQL wait (NO more connection error)
       - name: Wait for MySQL
-        run: sleep 20
+        run: |
+          echo "Waiting for MySQL..."
+          for i in {1..30}; do
+            mysqladmin ping -h 127.0.0.1 -u root -proot && break
+            echo "MySQL not ready yet..."
+            sleep 2
+          done
 
       - name: Create Tables
         run: |
           mysql -h 127.0.0.1 -P 3306 -u root -proot banking < sql/schema.sql
 
       - name: Generate Data
-        run: python scripts/generate_data.py
+        run: |
+          python scripts/generate_data.py
 
       - name: Load Data to MySQL
-        run: python scripts/load_to_mysql.py
+        run: |
+          python scripts/load_mysql.py
 
-      - name: Run Transform
-        run: python scripts/transform.py
+      - name: Run Transformation
+        run: |
+          python scripts/transform.py
