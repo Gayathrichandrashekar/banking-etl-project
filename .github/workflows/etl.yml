@@ -30,35 +30,47 @@ jobs:
         with:
           python-version: "3.11"
 
+      # ✅ IMPORTANT: install mysql client
+      - name: Install MySQL Client
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mysql-client
+
       - name: Install Dependencies
         run: |
           pip install pandas sqlalchemy mysql-connector-python faker
 
+      # ✅ WAIT UNTIL MYSQL IS REALLY READY
       - name: Wait for MySQL
         run: |
-          echo "Waiting for MySQL to be fully ready..."
+          echo "Waiting for MySQL..."
           for i in {1..60}; do
             mysql -h 127.0.0.1 -u root -proot -e "SELECT 1" && break
             echo "Still waiting..."
             sleep 2
           done
 
+      # ✅ CREATE TABLES
       - name: Create Tables
         run: |
           mysql -h 127.0.0.1 -P 3306 -u root -proot banking < sql/schema.sql
 
+      # ✅ GENERATE DATA
       - name: Generate Data
         run: |
           python scripts/generate_data.py
 
+      # ✅ LOAD DATA
       - name: Load Data to MySQL
         run: |
           python scripts/load_mysql.py
 
+      # ✅ VERIFY CONNECTION
       - name: Test MySQL Connection
         run: |
           mysql -h 127.0.0.1 -u root -proot -e "SHOW DATABASES;"
 
+      # ✅ RUN TRANSFORMATION
       - name: Run Transformation
         run: |
           python scripts/transform.py
