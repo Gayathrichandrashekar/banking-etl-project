@@ -14,7 +14,7 @@ credentials = service_account.Credentials.from_service_account_info(
 
 client = bigquery.Client(
     credentials=credentials,
-    project=credentials_info["banking-etl-project"]
+    project=credentials_info["project_id"]
 )
 
 df = pd.read_csv("customer_summary.csv")
