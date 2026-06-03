@@ -20,27 +20,76 @@ client = bigquery.Client(
     project=credentials_info["project_id"]
 )
 
-# Read transformed file
-df = pd.read_csv(
+# ==========================
+# Customer Summary
+# ==========================
+
+customer_summary = pd.read_csv(
     "customer_summary.csv"
 )
 
-# BigQuery Table
 table_id = "banking-etl-project.banking_data.customer_summary"
 
-# Delete existing table to avoid schema mismatch
 client.delete_table(
     table_id,
     not_found_ok=True
 )
 
-# Load DataFrame into BigQuery
 job = client.load_table_from_dataframe(
-    df,
+    customer_summary,
     table_id
 )
 
-# Wait for job completion
 job.result()
 
-print("Data Loaded to BigQuery Successfully!")
+print("customer_summary loaded")
+
+# ==========================
+# High Value Customers
+# ==========================
+
+high_value_customers = pd.read_csv(
+    "high_value_customers.csv"
+)
+
+table_id = "banking-etl-project.banking_data.high_value_customers"
+
+client.delete_table(
+    table_id,
+    not_found_ok=True
+)
+
+job = client.load_table_from_dataframe(
+    high_value_customers,
+    table_id
+)
+
+job.result()
+
+print("high_value_customers loaded")
+
+# ==========================
+# Transactions Transformed
+# ==========================
+
+transactions = pd.read_csv(
+    "transactions_transformed.csv"
+)
+
+table_id = "banking-etl-project.banking_data.transactions_transformed"
+
+client.delete_table(
+    table_id,
+    not_found_ok=True
+)
+
+job = client.load_table_from_dataframe(
+    transactions,
+    table_id
+)
+
+job.result()
+
+print("transactions_transformed loaded")
+
+print("All tables loaded successfully!")
