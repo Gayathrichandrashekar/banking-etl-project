@@ -1,4 +1,10 @@
 import pandas as pd
+from sqlalchemy import create_engine
+
+# MySQL Connection
+engine = create_engine(
+    "mysql+pymysql://root:root@127.0.0.1:3306/banking"
+)
 
 customers = pd.read_csv("data/customers.csv")
 accounts = pd.read_csv("data/accounts.csv")
