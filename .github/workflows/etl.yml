@@ -43,6 +43,7 @@ jobs:
           pip install faker
           pip install google-cloud-bigquery
           pip install pyarrow
+          pip install pymysql
 
       - name: Wait for MySQL
         run: |
